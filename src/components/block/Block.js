@@ -5,29 +5,35 @@ const Block = ({ value, currency, onChangeValue, onChangeCurrency }) => {
     const [display, setDisplay] = useState(false);
     const [cur, setCur] = useState(null);
 
-    const onCurrencyLoaded = (cur) => {
-        setDisplay(true)
-        setCur(cur)
-        onChangeCurrency(cur)
-    }
-
-    const delCurrencyLoaded = () => {
-        setDisplay(false)
-        setCur(null)    
-    }
-
     const defaultCurrencies = ['RUB', 'USD', 'EUR', 'GBP'];
     const hiddenCurrencies = ["AUD", "AZN", "AMD", "BYN", "BGN", "BRL", "HUF", "VND", "HKD", "GEL", "DKK", "AED", 
     "EGP", "INR", "IDR", "KZT", "CAD", "QAR", "KGS", "CNY", "MDL", "NZD", "NOK", "PLN", "RON", "XDR", "SGD", "TJS", "THB", 
     "TRY", "TMT", "UZS", "UAH", "CZK", "SEK", "CHF", "RSD", "ZAR", "KRW", "JPY"];
 
-    
+    const onCurrencyLoaded = (cur) => { 
+        if ((cur !== "RUB") && (cur !== "USD") && (cur !== "EUR") && (cur !== "GBP") ) {
+            setCur(cur)
+        } else {
+            setCur(null)
+            setDisplay(false)
+        }
+        onChangeCurrency(cur)    
+    }
+
+    const delCurrencyLoaded = () => {
+        if (display) {
+            setDisplay(false)    
+        } else {
+            setDisplay(true)
+        }
+            
+    }
 
     const renderCurrency = hiddenCurrencies.map((cur, i) => (
             <li 
                 tabIndex={0}
                 onClick={() => onCurrencyLoaded(cur)}
-                onKeyDown={() => onChangeCurrency(cur)}
+                onKeyDown={() => onCurrencyLoaded(cur)}
                 className={currency === cur ? 'active' : ''}
                 key={i}>
                 {cur}
@@ -36,15 +42,15 @@ const Block = ({ value, currency, onChangeValue, onChangeCurrency }) => {
     
     const noDisplay = display ? 'block' : 'none';
 
+    console.log(cur)
     return (
         <div className="block">
             <ul className="currencies">
             {defaultCurrencies.map((cur, i) => (
                 <li 
                 tabIndex={0}
-                onFocus={() => delCurrencyLoaded()}
-                onClick={() => onChangeCurrency(cur)}
-                onKeyDown={() => onChangeCurrency(cur)}
+                onClick={() => onCurrencyLoaded(cur)}
+                onKeyDown={() => onCurrencyLoaded(cur)}
                 className={currency === cur ? 'active' : ''}
                 key={i}>
                 {cur}
@@ -54,9 +60,9 @@ const Block = ({ value, currency, onChangeValue, onChangeCurrency }) => {
                                 {cur}
                         </li> : null }
                 <li 
-                    onClick={() => onCurrencyLoaded()}
+                    onClick={() => delCurrencyLoaded()}
                     tabIndex={0}
-                    onKeyDown={() => setDisplay(true)}
+                    onKeyDown={() => delCurrencyLoaded()}
                     className={display ? 'active__hidden' : ''}>
                     <svg height="50px" viewBox="0 0 50 50" width="50px">
                         <rect fill="none" height="50" width="50" />
